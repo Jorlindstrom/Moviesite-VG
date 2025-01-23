@@ -7,15 +7,22 @@
     "lib": "lib"
   },
   "scripts": {
+    "dev": "nodemon",
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "cross-env": "^7.0.3",
     "express": "^4.21.2",
     "express-handlebars": "^8.0.1",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "nodemon": "^3.1.9"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0"
   }
 }
