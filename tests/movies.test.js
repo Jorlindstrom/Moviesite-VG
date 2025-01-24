@@ -28,7 +28,7 @@ test('Home page shows list of movies', async () => {
       ],
     });
  const response = await request(app)
-    .get('/')
+    .get('/movies')
     .expect('Content-Type', /html/)
     .expect(200);
 
