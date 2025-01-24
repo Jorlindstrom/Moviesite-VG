@@ -1,7 +1,7 @@
 <ul>
   <% movies.forEach(function(movie) { %>
     <li>
-      <a href="/movies/<%= movie.id %>"><%= movie.title %></a>
+      <a href="/movies/<%- movie.id %>"><%- movie.title %></a>
     </li>
   <% }); %>
 </ul>

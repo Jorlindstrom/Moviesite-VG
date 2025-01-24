@@ -1,5 +1,6 @@
 import express from "express";
 import expressEjsLayouts from "express-ejs-layouts";
+import { marked } from "marked";
 
 function initApp(api) {
   const app = express();
@@ -7,8 +8,7 @@ function initApp(api) {
   app.use(expressEjsLayouts);
   app.set("view engine", "ejs");
   app.set("views", "./templates");
-
-
+  
  
 
   app.get("/", async (request, response) => {
@@ -56,12 +56,22 @@ function initApp(api) {
   app.get("/movies", async (request, response) => {
     try {
       const movies = await api.loadMovies();
+
+      // Convert the intro text for each movie from Markdown to HTML
+      const moviesWithMarkdown = movies.map(movie => ({
+        ...movie,
+        intro: marked(movie.intro), //Converts "intro" to HTML
+      }));
+
+      //console.log(moviesWithMarkdown);
+
       response.render("movies", {
         layout: "./layouts/movies-layout",
         title: "Filmsida",
         description:"Retro biografen ligger i Västerås och visar filmer från förr",
         keywords:"Biograf,retro, 50-tal, 70-tal, 80-tal, 90-tal, 00-tal, Västerås",
-        movies,
+        movies: moviesWithMarkdown,
+        //movies,
       });
     } catch (error) {
       console.error("Error fetching all movies:", error);
@@ -73,12 +83,12 @@ function initApp(api) {
     try {
       const movie = await api.loadMovie(request.params.movieId);
 
-      // if (!movie) {
-      //   return response.status(404).render("404", {
-      //     layout: "main", // Standardlayout eller ingen layout alls
-      //     title: "404 - Page Not Found",
-      //   });
-      // }
+      if (!movie) {
+        return response.status(404).render("404", {
+          layout: "main", // Standardlayout eller ingen layout alls
+          title: "404 - Page Not Found",
+        });
+      }
 
       response.render("movie", {
         layout: "./layouts/movie-layout",
@@ -89,10 +99,10 @@ function initApp(api) {
       });
     } catch (error) {
       console.error("Error fetching the movie:", error);
-      //   response.status(404).render('404', {
-      //     layout: "main",
-      //     title: "404 – Page Not Found",
-      //   })
+        response.status(404).render('404', {
+          layout: "./layouts/main",
+          title: "404 – Page Not Found",
+        })
     }
   });
 
