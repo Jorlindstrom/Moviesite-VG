@@ -1,27 +1,28 @@
 import express from "express";
-import { engine } from "express-handlebars";
+import expressEjsLayouts from "express-ejs-layouts";
 
 function initApp(api) {
   const app = express();
 
-  app.engine("handlebars", engine());
-  app.set("view engine", "handlebars");
+  app.use(expressEjsLayouts);
+  app.set("view engine", "ejs");
   app.set("views", "./templates");
+
+
+ 
 
   app.get("/", async (request, response) => {
     response.render("index", {
-      layout: "index-layout",
+      layout: "./layouts/index-layout",
       title: "Retro - biografen som visar filmer från förr -",
-      description:
-        "Retro biografen ligger i västerås och visar filmer från förr",
-      keywords:
-        "Biograf,retro, 50-tal, 70-tal, 80-tal, 90-tal, 00-tal, Västerås",
+      description:"Retro biografen ligger i västerås och visar filmer från förr",
+      keywords:"Biograf,retro, 50-tal, 70-tal, 80-tal, 90-tal, 00-tal, Västerås",
     });
   });
 
   app.get("/about", async (request, response) => {
     response.render("about", {
-      layout: "about-layout",
+      layout: "./layouts/about-layout",
       title: "Om ossida",
       description:
         "Retro biografen ligger i västerås och visar filmer från förr",
@@ -32,7 +33,7 @@ function initApp(api) {
 
   app.get("/contact", async (request, response) => {
     response.render("contact", {
-      layout: "contact-layout",
+      layout: "./layouts/contact-layout",
       title: "Kontaktsida",
       description:
         "Retro biografen ligger i västerås och visar filmer från förr",
@@ -43,7 +44,7 @@ function initApp(api) {
 
   app.get("/cafe", async (request, response) => {
     response.render("cafe", {
-      layout: "cafe-layout",
+      layout: "./layouts/cafe-layout",
       title: "Kafesida",
       description:
         "Retro biografen ligger i västerås och visar filmer från förr",
@@ -56,13 +57,11 @@ function initApp(api) {
     try {
       const movies = await api.loadMovies();
       response.render("movies", {
-        layout: "movies-layout",
+        layout: "./layouts/movies-layout",
         title: "Filmsida",
-        description:
-          "Retro biografen ligger i Västerås och visar filmer från förr",
-        keywords:
-          "Biograf,retro, 50-tal, 70-tal, 80-tal, 90-tal, 00-tal, Västerås",
-        movies, // Skicka filmerna till Handlebars
+        description:"Retro biografen ligger i Västerås och visar filmer från förr",
+        keywords:"Biograf,retro, 50-tal, 70-tal, 80-tal, 90-tal, 00-tal, Västerås",
+        movies,
       });
     } catch (error) {
       console.error("Error fetching all movies:", error);
@@ -82,13 +81,11 @@ function initApp(api) {
       // }
 
       response.render("movie", {
-        layout: "movie-layout",
+        layout: "./layouts/movie-layout",
         title: movie.title,
-        description:
-          "Retro biografen ligger i Västerås och visar filmer från förr",
-        keywords:
-          "Biograf,retro, 50-tal, 70-tal, 80-tal, 90-tal, 00-tal, Västerås",
-        movie, // Skicka filmen till Handlebars
+        description:"Retro biografen ligger i Västerås och visar filmer från förr",
+        keywords:"Biograf,retro, 50-tal, 70-tal, 80-tal, 90-tal, 00-tal, Västerås",
+        movie,
       });
     } catch (error) {
       console.error("Error fetching the movie:", error);
