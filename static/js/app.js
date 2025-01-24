@@ -1,8 +1,7 @@
-import express, { response } from "express";
+import express from "express";
 import { engine } from "express-handlebars";
-import { loadMovies, loadMovie } from "./movies.js";
 
-function initApp() {
+function initApp(api) {
   const app = express();
 
   app.engine("handlebars", engine());
@@ -55,7 +54,7 @@ function initApp() {
 
   app.get("/movies", async (request, response) => {
     try {
-      const movies = await loadMovies();
+      const movies = await api.loadMovies();
       response.render("movies", {
         layout: "movies-layout",
         title: "Filmsida",
@@ -73,7 +72,7 @@ function initApp() {
 
   app.get("/movies/:movieId", async (request, response) => {
     try {
-      const movie = await loadMovie(request.params.movieId);
+      const movie = await api.loadMovie(request.params.movieId);
 
       // if (!movie) {
       //   return response.status(404).render("404", {
@@ -84,7 +83,7 @@ function initApp() {
 
       response.render("movie", {
         layout: "movie-layout",
-        //title: movie.title,
+        title: movie.title,
         description:
           "Retro biografen ligger i Västerås och visar filmer från förr",
         keywords:
