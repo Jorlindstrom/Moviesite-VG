@@ -1,6 +1,6 @@
 import express from "express";
 import expressEjsLayouts from "express-ejs-layouts";
-import { marked } from "marked";
+import showdown from "showdown";
 
 function initApp(api) {
   const app = express();
@@ -8,15 +8,17 @@ function initApp(api) {
   app.use(expressEjsLayouts);
   app.set("view engine", "ejs");
   app.set("views", "./templates");
-  
- 
+
+  const converter = new showdown.Converter();
 
   app.get("/", async (request, response) => {
     response.render("index", {
       layout: "./layouts/index-layout",
       title: "Retro - biografen som visar filmer från förr -",
-      description:"Retro biografen ligger i västerås och visar filmer från förr",
-      keywords:"Biograf,retro, 50-tal, 70-tal, 80-tal, 90-tal, 00-tal, Västerås",
+      description:
+        "Retro biografen ligger i västerås och visar filmer från förr",
+      keywords:
+        "Biograf,retro, 50-tal, 70-tal, 80-tal, 90-tal, 00-tal, Västerås",
     });
   });
 
@@ -56,20 +58,21 @@ function initApp(api) {
   app.get("/movies", async (request, response) => {
     try {
       const movies = await api.loadMovies();
-
       // Convert the intro text for each movie from Markdown to HTML
-      const moviesWithMarkdown = movies.map(movie => ({
-        ...movie,
-        intro: marked(movie.intro), //Converts "intro" to HTML
+      const moviesWithMarkdown = movies.map((movie) => ({
+      ...movie,
+      intro: converter.makeHtml(movie.intro),
       }));
 
-      //console.log(moviesWithMarkdown);
+      console.log(moviesWithMarkdown);
 
       response.render("movies", {
         layout: "./layouts/movies-layout",
         title: "Filmsida",
-        description:"Retro biografen ligger i Västerås och visar filmer från förr",
-        keywords:"Biograf,retro, 50-tal, 70-tal, 80-tal, 90-tal, 00-tal, Västerås",
+        description:
+          "Retro biografen ligger i Västerås och visar filmer från förr",
+        keywords:
+          "Biograf,retro, 50-tal, 70-tal, 80-tal, 90-tal, 00-tal, Västerås",
         movies: moviesWithMarkdown,
         //movies,
       });
@@ -85,24 +88,28 @@ function initApp(api) {
 
       if (!movie) {
         return response.status(404).render("404", {
-          layout: "main", // Standardlayout eller ingen layout alls
+          layout: "main", // Standardlayout or no layout at all
           title: "404 - Page Not Found",
         });
       }
 
+      movie.intro = converter.makeHtml(movie.intro);
+
       response.render("movie", {
         layout: "./layouts/movie-layout",
         title: movie.title,
-        description:"Retro biografen ligger i Västerås och visar filmer från förr",
-        keywords:"Biograf,retro, 50-tal, 70-tal, 80-tal, 90-tal, 00-tal, Västerås",
+        description:
+          "Retro biografen ligger i Västerås och visar filmer från förr",
+        keywords:
+          "Biograf,retro, 50-tal, 70-tal, 80-tal, 90-tal, 00-tal, Västerås",
         movie,
       });
     } catch (error) {
       console.error("Error fetching the movie:", error);
-        response.status(404).render('404', {
-          layout: "./layouts/main",
-          title: "404 – Page Not Found",
-        })
+      response.status(404).render("404", {
+        layout: "./layouts/main",
+        title: "404 – Page Not Found",
+      });
     }
   });
 
