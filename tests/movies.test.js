@@ -36,3 +36,17 @@ test('Home page shows list of movies', async () => {
   expect(response.text).toMatch('Forrest Gump');
   expect(response.text).toMatch('Training Day');
 });
+
+test('Non-existent movie page shows 404 error', async () => {
+  const app = initApp({
+    loadMovie: async () => null,
+    loadMovies: async () => [],
+  });
+
+  const response = await request(app)
+    .get('/movies/100')
+    .expect('Content-Type', /html/)
+    .expect(404);
+
+  expect(response.text).toMatch('404 - Page Not Found');
+});

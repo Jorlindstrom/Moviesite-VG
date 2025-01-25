@@ -88,7 +88,7 @@ function initApp(api) {
 
       if (!movie) {
         return response.status(404).render("404", {
-          layout: "main", // Standardlayout or no layout at all
+          layout: "./layouts/404-layout",
           title: "404 - Page Not Found",
         });
       }
@@ -107,7 +107,7 @@ function initApp(api) {
     } catch (error) {
       console.error("Error fetching the movie:", error);
       response.status(404).render("404", {
-        layout: "./layouts/main",
+        layout: "./layouts/404-layout",
         title: "404 – Page Not Found",
       });
     }
