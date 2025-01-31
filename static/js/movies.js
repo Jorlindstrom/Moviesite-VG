@@ -5,30 +5,41 @@ const API_BASE = 'https://plankton-app-xhkom.ondigitalocean.app/api';
 
 function toMovieObject(apiObject) {
     const movie = {
-        id: apiObject.id, //Hämtar id
-        ...apiObject.attributes, //Hämtar alla delar som ligger i attributes och sprider ut dessa i en array
+        id: apiObject.id, //Fetching id
+        ...apiObject.attributes, //Gets all the parts that are in the attributes and spreads them out in an array
     }
  
    return movie;
 }
 
 export async function loadMovies() {
-    const res = await fetch(API_BASE + '/movies');
+    try {
+        const res = await fetch(`${API_BASE}/movies`);
+
+        if (!res.ok) {
+            throw new Error(`HTTP-fel! Status: ${res.status}`);
+        }
+
     const payload = await res.json();
     return payload.data.map(toMovieObject);
+} catch (error) {
+    console.error("Error downloading movies:", error);
+    return [];
 }
+};
 
 export async function loadMovie(id) {
-    // try {
-    //     const res = await fetch(`${API_BASE}/movies/${id}`);
-    //     if (!res.ok) {
-    //       return null; // Returnera null om filmen inte hittas
-    //     }
-   const res= await fetch(API_BASE + '/movies/' + id);
-    const payload = await res.json();
-    return toMovieObject(payload.data);
-// }catch (error) {
-//     console.error("Error fetching movie:", error);
-//     return null; // Returnera null om något går fel
-//   }
-}
+    try {
+        const res = await fetch(`${API_BASE}/movies/${id}`);
+
+        if (!res.ok) {
+            throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+
+        const payload = await res.json();
+        return toMovieObject(payload.data);
+    } catch (error) {
+        console.error(`Error retrieving movie with ID ${id}:`, error);
+        return null;
+    }
+};

@@ -60,8 +60,8 @@ function initApp(api) {
       const movies = await api.loadMovies();
       // Convert the intro text for each movie from Markdown to HTML
       const moviesWithMarkdown = movies.map((movie) => ({
-      ...movie,
-      intro: converter.makeHtml(movie.intro),
+        ...movie,
+        intro: converter.makeHtml(movie.intro),
       }));
 
       console.log(moviesWithMarkdown);
